@@ -162,7 +162,7 @@ const DispatchCrew = () => {
                 </table>
             </div>
             <div className="home-page__button">
-                <Link to="/admin_view">Back</Link>
+                <Link to="/dispatch_view">Back</Link>
             </div>
         </section>
     )

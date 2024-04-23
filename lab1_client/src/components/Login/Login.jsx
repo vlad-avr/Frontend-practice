@@ -3,23 +3,25 @@ import { useRef, useState, useEffect } from "react";
 import axios from "../../api/axios";
 import "./Login.css"
 import useAuth from "../hooks/useAuth";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const LOGIN_URL = '/auth'
 
 const Login = () => {
 
-    const { setAuth } = useAuth();
+    const { auth, setAuth } = useAuth();
 
-    const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || "/home";
+    // const navigate = useNavigate();
+    // const location = useLocation();
+    // const from = location.state?.from?.pathname || "/home";
 
     const userRef = useRef();
     const errRef = useRef();
 
     const [user, setUser] = useState('');
     const [pwd, setPwd] = useState('');
+    const [email, setEmail] = useState('');
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false)
 
@@ -31,21 +33,27 @@ const Login = () => {
         setErrMsg();
     }, [user, pwd])
 
+    useEffect(() => {
+        window.localStorage.setItem('Token', JSON.stringify(auth));
+    }, [auth])
+
+    useEffect(() => {
+        const data = window.localStorage.getItem("Token");
+        console.log(data);
+        setAuth(JSON.parse(data));
+    }, [])
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(user)
-        console.log(pwd)
-        const user_obj = {
-            login: user,
-            password: pwd
-        }
-        await axios.post(LOGIN_URL, JSON.stringify(user_obj), {
-            headers: {
-                'Content-Type': 'application/json'
+        await axios.get(LOGIN_URL, {
+            params: {
+                login: user,
+                password: pwd,
+                email: email
             }
         }).then(response => {
             console.log(JSON.stringify(response?.data));
-            setAuth({ user, pwd })
+            setAuth(jwtDecode(response.data.token))
             setUser('');
             setPwd('');
             setSuccess(true);
@@ -68,12 +76,41 @@ const Login = () => {
             });
     }
 
+    const handleGreeting = () =>{
+        console.log(auth.role);
+        switch(auth.role){
+            case "admin":
+                return(
+                    <section>
+                        <h2>Hello, {auth.login}!</h2>
+                        <h3>You are logged in as Admin</h3>
+                        <Link to="/home">Go to the Home page</Link>
+                    </section>
+                )
+            case "user":
+                return(
+                    <section>
+                        <h2>Hello, {auth.login}!</h2>
+                        <h3>You are logged in as User</h3>
+                        <Link to="/home">Go to the Home page</Link>
+                    </section>
+                )
+            case "dispatch":
+                return(
+                    <section>
+                        <h2>Hello, {auth.login}!</h2>
+                        <h3>You are logged in as Dispatch</h3>
+                        <Link to="/home">Go to the Home page</Link>
+                    </section>
+                )
+            default:
+                setSuccess(false);
+        }
+    }
+
     return (
         <>{success ? (
-            <section>
-                <h1>Logged in Successfully!</h1>
-                <Link to="/home">Go to the Home page</Link>
-            </section>
+            handleGreeting()
         ) : (
             <div>
                 <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
@@ -81,6 +118,8 @@ const Login = () => {
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="username">Username:</label>
                     <input type="text" id="username" ref={userRef} autoComplete="off" onChange={(e) => setUser(e.target.value)} value={user} required />
+                    <label htmlFor="email">Email:</label>
+                    <input type="text" id="email" autoComplete="off" onChange={(e) => setEmail(e.target.value)} value={email} required />
                     <label htmlFor="password">Password:</label>
                     <input type="password" id="password" onChange={(e) => setPwd(e.target.value)} value={pwd} required />
                     <button>Sign in</button>

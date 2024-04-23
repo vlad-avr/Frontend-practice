@@ -114,7 +114,10 @@ const Crew = () => {
                 </table>
             </div>
             <div className="home-page__button">
-                <Link to="/admin_view">Back</Link>
+                <Link to="/admin_view">Admin page</Link>
+            </div>
+            <div className="home-page__button">
+                <Link to="/dispatch_view">Dispatch Page</Link>
             </div>
         </section>
     )

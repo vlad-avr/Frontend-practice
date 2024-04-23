@@ -24,6 +24,7 @@ h1 {
 form {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 /* Styles for the form labels */
