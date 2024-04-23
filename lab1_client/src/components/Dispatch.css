@@ -1,0 +1,32 @@
+.dispatch-page {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.dispatch-page h1 {
+    font-size: 2em;
+    color: #333;
+}
+
+.dispatch-page__description {
+    font-size: 1.2em;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.dispatch-page__link {
+    margin-top: 20px;
+}
+
+.dispatch-page__link-text {
+    text-decoration: none;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.dispatch-page__link-text:hover {
+    background-color: #0056b3;
+}
