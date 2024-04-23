@@ -3,6 +3,7 @@ import "../pages/Entity.css"
 import "../Home.css"
 import axios from "../../api/axios"
 import { useState } from "react"
+import getHeaderConfig from "../hooks/Config"
 
 const SET_URL = "/crew"
 
@@ -16,12 +17,17 @@ const DispatchCrew = () => {
     const [qualification, setQualification] = useState('PILOT');
     const [brigadeId, setBrigadeId] = useState('');
 
+    const config = getHeaderConfig();
+
+
     const makeRequest = async (field, value) => {
+        console.log(config);
         const response = await axios.get(SET_URL, {
             params: {
                 field: field,
                 value: value
-            }
+            },
+            headers : config.headers
         });
         console.log(JSON.stringify(response?.data));
         setData(response?.data);
@@ -33,7 +39,8 @@ const DispatchCrew = () => {
             params: {
             field: "brigades",
             value: "brigades"
-            }
+            },
+            headers: config.headers
         });
         console.log(JSON.stringify(brigadeIdsResp?.data));
         setBrigadeIds(brigadeIdsResp?.data);
@@ -41,7 +48,7 @@ const DispatchCrew = () => {
 
     const makeEdit = async (id) => {
         const editItem = data.find((item) => item.id === id);
-        const response = await axios.put(SET_URL, JSON.stringify(editItem));
+        const response = await axios.put(SET_URL, JSON.stringify(editItem), config);
         setData(response?.data);
         getIds();
     }
@@ -51,7 +58,8 @@ const DispatchCrew = () => {
             params: {
                 field: field,
                 value: value
-            }
+            },
+            headers: config.headers
         });
         setData(response?.data);
         getIds()
@@ -66,7 +74,7 @@ const DispatchCrew = () => {
             name: name,
             qualification: qualification,
             brigadeId: ""
-        }));
+        }), config);
         setData(response?.data);
         setName("");
         setQualification("PILOT");

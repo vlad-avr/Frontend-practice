@@ -3,6 +3,7 @@ import "../pages/Entity.css"
 import "../Home.css"
 import axios from "../../api/axios"
 import { useState } from "react"
+import getHeaderConfig from "../hooks/Config"
 
 const SET_URL = "/flight"
 
@@ -19,30 +20,32 @@ const EditFlight = () => {
     const [planeId, setPlaneId] = useState('');
     const [brigadeId, setBrigadeId] = useState('');
 
+    const config = getHeaderConfig();
+
     const getIds = async() => {
         const raceIdsResp = await axios.get(SET_URL, {
             params: {
             field: "ids",
             value: "race"
-            }
+            },
+            headers: config.headers
         });
-        console.log(JSON.stringify(raceIdsResp?.data));
         setRaceIds(raceIdsResp?.data);
         const planeIdsResp = await axios.get(SET_URL, {
             params: {
             field: "ids",
             value: "plane"
-            }
+            },
+            headers: config.headers
         });
-        console.log(JSON.stringify(planeIdsResp?.data));
         setPlaneIds(planeIdsResp?.data);
         const brigadeIdsResp = await axios.get(SET_URL, {
             params: {
             field: "ids",
             value: "brigade"
-            }
+            },
+            headers: config.headers
         });
-        console.log(JSON.stringify(brigadeIdsResp?.data));
         setBrigadeIds(brigadeIdsResp?.data);
     }
 
@@ -51,16 +54,16 @@ const EditFlight = () => {
             params: {
                 field: field,
                 value: value
-            }
+            },
+            headers: config.headers
         });
-        console.log(JSON.stringify(response?.data));
         setData(response?.data);
         getIds();
     }
 
     const makeEdit = async (id) => {
         const editItem = data.find((item) => item.id === id);
-        const response = await axios.put(SET_URL, JSON.stringify(editItem));
+        const response = await axios.put(SET_URL, JSON.stringify(editItem), config);
         setData(response?.data);
         getIds();
     }
@@ -70,7 +73,8 @@ const EditFlight = () => {
             params: {
                 field: field,
                 value: value
-            }
+            },
+            headers: config.headers
         });
         setData(response?.data);
         getIds();
@@ -82,7 +86,7 @@ const EditFlight = () => {
             raceId: raceId,
             planeId: planeId,
             brigadeId: brigadeId
-        }));
+        }), config);
         setData(response?.data);
         getIds();
         setBrigadeId('');
@@ -149,9 +153,6 @@ const EditFlight = () => {
                                 <td><select value={item.raceId} onChange={(e) => {
                                     const newData = [...data];
                                     newData.find((el) => el.id === item.id).raceId = e.target.value; 
-                                    // const oldId = flight.raceId;
-                                    // flight.raceId = e.target.value;
-                                    // setRaceIds(raceIds.filter(item => item !== flight.raceId).push(oldId));
                                     setData(newData);
                                 }}>
                                 <option value=''></option>
@@ -162,10 +163,6 @@ const EditFlight = () => {
                                 <td><select value={item.planeId} onChange={(e) => {
                                     const newData = [...data];
                                     newData.find((el) => el.id === item.id).planeId = e.target.value
-                                    // const flight = newData.find((el) => el.id === item.id); 
-                                    // const oldId = flight.planeId;
-                                    // flight.planeId = e.target.value;
-                                    // setPlaneIds(planeIds.filter(item => item !== flight.planeId).push(oldId));
                                     setData(newData);
                                 }}>
                                 <option value=''></option>
@@ -176,10 +173,6 @@ const EditFlight = () => {
                                 <td><select value={item.brigadeId} onChange={(e) => {
                                     const newData = [...data];
                                     newData.find((el) => el.id === item.id).brigadeId = e.target.value
-                                    // const flight = newData.find((el) => el.id === item.id); 
-                                    // const oldId = flight.brigadeId;
-                                    // flight.brigadeId = e.target.value;
-                                    // setBrigadeIds(brigadeIds.filter(item => item !== flight.brigadeId).push(oldId));
                                     setData(newData);
                                 }}>
                                 <option value=''></option>

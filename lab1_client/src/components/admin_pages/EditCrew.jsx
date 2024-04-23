@@ -3,6 +3,7 @@ import "../pages/Entity.css"
 import "../Home.css"
 import axios from "../../api/axios"
 import { useState } from "react"
+import getHeaderConfig from "../hooks/Config"
 
 const SET_URL = "/crew"
 
@@ -14,20 +15,22 @@ const EditCrew = () => {
     const [name, setName] = useState('');
     const [qualification, setQualification] = useState('PILOT');
 
+    const config = getHeaderConfig();
+
     const makeRequest = async (field, value) => {
         const response = await axios.get(SET_URL, {
             params: {
                 field: field,
                 value: value
-            }
+            },
+            headers: config.headers
         });
-        console.log(JSON.stringify(response?.data));
         setData(response?.data);
     }
 
     const makeEdit = async (id) => {
         const editItem = data.find((item) => item.id === id);
-        const response = await axios.put(SET_URL, JSON.stringify(editItem));
+        const response = await axios.put(SET_URL, JSON.stringify(editItem), config);
         setData(response?.data);
     }
 
@@ -36,7 +39,8 @@ const EditCrew = () => {
             params: {
                 field: field,
                 value: value
-            }
+            },
+            headers: config.headers
         });
         setData(response?.data);
     }
@@ -50,7 +54,7 @@ const EditCrew = () => {
             name: name,
             qualification: qualification,
             brigadeId: ""
-        }));
+        }), config);
         setData(response?.data);
         setName("");
         setQualification("PILOT");

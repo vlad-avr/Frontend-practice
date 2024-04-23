@@ -3,6 +3,7 @@ import "../pages/Entity.css"
 import "../Home.css"
 import axios from "../../api/axios"
 import { useState } from "react"
+import getHeaderConfig from "../hooks/Config"
 
 const SET_URL = "/race"
 
@@ -18,12 +19,15 @@ const EditPlane = () => {
     const [passengers, setPassengers] = useState('');
     const [luggageWeight, setLuggageWeight] = useState('');
 
+    const config = getHeaderConfig();
+
     const makeRequest = async (field, value) => {
         const response = await axios.get(SET_URL, {
             params: {
                 field: field,
                 value: value
-            }
+            },
+            headers: config.headers
         });
         console.log(JSON.stringify(response?.data));
         setData(response?.data);
@@ -31,7 +35,7 @@ const EditPlane = () => {
 
     const makeEdit = async (id) => {
         const editItem = data.find((item) => item.id === id);
-        const response = await axios.put(SET_URL, JSON.stringify(editItem));
+        const response = await axios.put(SET_URL, JSON.stringify(editItem), config);
         setData(response?.data);
     }
 
@@ -40,7 +44,8 @@ const EditPlane = () => {
             params: {
                 field: field,
                 value: value
-            }
+            },
+            headers: config.headers
         });
         setData(response?.data);
     }
@@ -54,7 +59,7 @@ const EditPlane = () => {
             arrivalTime: arrivalTime,
             passengers: passengers,
             luggageWeight: luggageWeight
-        }));
+        }), config);
         setData(response?.data);
         setDeparturePlace("");
         setArrivalPlace("");

@@ -3,10 +3,11 @@ import "../pages/Entity.css"
 import "../Home.css"
 import axios from "../../api/axios"
 import { useState } from "react"
+import getHeaderConfig from "../hooks/Config"
 
 const SET_URL = "/brigade"
 
-const Crew = () => {
+const EditBrigade = () => {
 
     const [data, setData] = useState([]);
     const [id, setID] = useState('');
@@ -14,20 +15,22 @@ const Crew = () => {
     const [name, setName] = useState('');
     const [staticCrew, setStaticCrew] = useState(false);
 
+    const config = getHeaderConfig();
+
     const makeRequest = async (field, value) => {
         const response = await axios.get(SET_URL, {
             params: {
                 field: field,
                 value: value
-            }
+            },
+            headers: config.headers
         });
-        console.log(JSON.stringify(response?.data));
         setData(response?.data);
     }
 
     const makeEdit = async (id) => {
         const editItem = data.find((item) => item.id === id);
-        const response = await axios.put(SET_URL, JSON.stringify(editItem));
+        const response = await axios.put(SET_URL, JSON.stringify(editItem), config);
         setData(response?.data);
     }
 
@@ -36,7 +39,8 @@ const Crew = () => {
             params: {
                 field: field,
                 value: value
-            }
+            },
+            headers: config.headers
         });
         setData(response?.data);
     }
@@ -46,7 +50,7 @@ const Crew = () => {
             id: "",
             name: name,
             staticCrew: staticCrew
-        }));
+        }), config);
         setData(response?.data);
         setName("");
         setStaticCrew(false);
@@ -123,4 +127,4 @@ const Crew = () => {
     )
 }
 
-export default Crew
+export default EditBrigade

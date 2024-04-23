@@ -3,6 +3,7 @@ import "./Entity.css"
 import "../Home.css"
 import axios from "../../api/axios"
 import { useState } from "react"
+import getHeaderConfig from "../hooks/Config"
 
 const CREW_URL = "/crew"
 
@@ -13,12 +14,15 @@ const Crew = () => {
     const [name, setName] = useState('');
     const [qualification, setQualification] = useState('');
 
+    const config = getHeaderConfig();
+
     const makeRequest = async (field, value) => {
         const response = await axios.get(CREW_URL, {
             params: {
                 field: field,
                 value: value
-            }
+            },
+            headers: config.headers
         });
         console.log(JSON.stringify(response?.data));
         setData(response?.data);

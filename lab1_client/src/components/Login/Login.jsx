@@ -5,14 +5,13 @@ import "./Login.css"
 import useAuth from "../hooks/useAuth";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const LOGIN_URL = '/auth'
 
 const Login = () => {
 
-    const { auth, setAuth } = useAuth();
-
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     // const location = useLocation();
     // const from = location.state?.from?.pathname || "/home";
 
@@ -30,18 +29,8 @@ const Login = () => {
     }, [])
 
     useEffect(() => {
-        setErrMsg();
+        setErrMsg('');
     }, [user, pwd])
-
-    useEffect(() => {
-        window.localStorage.setItem('Token', JSON.stringify(auth));
-    }, [auth])
-
-    useEffect(() => {
-        const data = window.localStorage.getItem("Token");
-        console.log(data);
-        setAuth(JSON.parse(data));
-    }, [])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -52,11 +41,13 @@ const Login = () => {
                 email: email
             }
         }).then(response => {
+            const token = response.data
             console.log(JSON.stringify(response?.data));
-            setAuth(jwtDecode(response.data.token))
             setUser('');
             setPwd('');
             setSuccess(true);
+            window.localStorage.setItem('Token', JSON.stringify(token));
+            navigate('/home')
             //navigate(from, { replace: true });
         })
             .catch(err => {
@@ -76,43 +67,39 @@ const Login = () => {
             });
     }
 
-    const handleGreeting = () =>{
-        console.log(auth.role);
-        switch(auth.role){
-            case "admin":
-                return(
-                    <section>
-                        <h2>Hello, {auth.login}!</h2>
-                        <h3>You are logged in as Admin</h3>
-                        <Link to="/home">Go to the Home page</Link>
-                    </section>
-                )
-            case "user":
-                return(
-                    <section>
-                        <h2>Hello, {auth.login}!</h2>
-                        <h3>You are logged in as User</h3>
-                        <Link to="/home">Go to the Home page</Link>
-                    </section>
-                )
-            case "dispatch":
-                return(
-                    <section>
-                        <h2>Hello, {auth.login}!</h2>
-                        <h3>You are logged in as Dispatch</h3>
-                        <Link to="/home">Go to the Home page</Link>
-                    </section>
-                )
-            default:
-                setSuccess(false);
-        }
-    }
+    // const handleGreeting = () =>{
+    //     switch(auth.role){
+    //         case "admin":
+    //             return(
+    //                 <section>
+    //                     <h2>Hello, {auth.login}!</h2>
+    //                     <h3>You are logged in as Admin</h3>
+    //                     <Link to="/home">Go to the Home page</Link>
+    //                 </section>
+    //             )
+    //         case "user":
+    //             return(
+    //                 <section>
+    //                     <h2>Hello, {auth.login}!</h2>
+    //                     <h3>You are logged in as User</h3>
+    //                     <Link to="/home">Go to the Home page</Link>
+    //                 </section>
+    //             )
+    //         case "dispatch":
+    //             return(
+    //                 <section>
+    //                     <h2>Hello, {auth.login}!</h2>
+    //                     <h3>You are logged in as Dispatch</h3>
+    //                     <Link to="/home">Go to the Home page</Link>
+    //                 </section>
+    //             )
+    //         default:
+    //             setSuccess(false);
+    //     }
+    // }
 
     return (
-        <>{success ? (
-            handleGreeting()
-        ) : (
-            <div>
+        <div>
                 <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
                 <h1>Sign in</h1>
                 <form onSubmit={handleSubmit}>
@@ -125,8 +112,6 @@ const Login = () => {
                     <button>Sign in</button>
                 </form>
             </div>
-        )}
-        </>
     )
 }
 
