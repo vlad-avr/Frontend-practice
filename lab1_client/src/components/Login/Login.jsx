@@ -34,13 +34,11 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await axios.get(LOGIN_URL, {
-            params: {
-                login: user,
-                password: pwd,
-                email: email
-            }
-        }).then(response => {
+        await axios.post(LOGIN_URL, JSON.stringify({
+            login: user,
+            password: pwd,
+            email: email
+        })).then(response => {
             const token = response.data
             console.log(JSON.stringify(response?.data));
             setUser('');
