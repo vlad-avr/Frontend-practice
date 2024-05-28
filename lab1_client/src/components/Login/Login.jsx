@@ -38,7 +38,11 @@ const Login = () => {
             login: user,
             password: pwd,
             email: email
-        })).then(response => {
+        }),  {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
             const token = response.data
             console.log(JSON.stringify(response?.data));
             setUser('');
@@ -64,37 +68,6 @@ const Login = () => {
                 errRef.current.focus();
             });
     }
-
-    // const handleGreeting = () =>{
-    //     switch(auth.role){
-    //         case "admin":
-    //             return(
-    //                 <section>
-    //                     <h2>Hello, {auth.login}!</h2>
-    //                     <h3>You are logged in as Admin</h3>
-    //                     <Link to="/home">Go to the Home page</Link>
-    //                 </section>
-    //             )
-    //         case "user":
-    //             return(
-    //                 <section>
-    //                     <h2>Hello, {auth.login}!</h2>
-    //                     <h3>You are logged in as User</h3>
-    //                     <Link to="/home">Go to the Home page</Link>
-    //                 </section>
-    //             )
-    //         case "dispatch":
-    //             return(
-    //                 <section>
-    //                     <h2>Hello, {auth.login}!</h2>
-    //                     <h3>You are logged in as Dispatch</h3>
-    //                     <Link to="/home">Go to the Home page</Link>
-    //                 </section>
-    //             )
-    //         default:
-    //             setSuccess(false);
-    //     }
-    // }
 
     return (
         <div>
